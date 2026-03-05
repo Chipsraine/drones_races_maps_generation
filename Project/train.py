@@ -1,5 +1,5 @@
 """
-Обучение U-Net для генерации траекторий на карте трассы.
+Обучение U-Net для предсказания тепловой карты ключевых точек (waypoints).
 Все метрики, параметры и модель логируются в ClearML.
 
 Запуск:
@@ -8,6 +8,7 @@
 
 import os
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader, random_split
@@ -22,7 +23,7 @@ from dataset_generator import generate_dataset
 
 HYPERPARAMS = {
     # Данные
-    "n_samples":    500,
+    "n_samples":    2000,
     "grid_size":    100,
     "n_gates":      2,
     "n_rings":      2,
@@ -32,10 +33,12 @@ HYPERPARAMS = {
     # Модель
     "base_features": 32,
     # Обучение
-    "epochs":        20,
-    "batch_size":    8,
-    "lr":            1e-3,
-    "weight_decay":  1e-4,
+    "epochs":           50,
+    "batch_size":       8,
+    "lr":               1e-3,
+    "weight_decay":     1e-4,
+    # Early stopping
+    "early_stop_patience": 10,
 }
 
 
@@ -43,22 +46,21 @@ HYPERPARAMS = {
 
 class TrackDataset(Dataset):
     """
-    Датасет пар (input, target).
-    input:  карта без пути → one-hot тензор (5, H, W)
-    target: маска пути     → бинарный тензор (1, H, W)
+    Датасет пар (input, heatmap).
+    input:   карта без пути → one-hot тензор (5, H, W)
+    heatmap: тепловая карта waypoints → тензор (1, H, W) float32, значения [0, 1]
     """
 
-    def __init__(self, inputs: np.ndarray, targets: np.ndarray):
-        self.inputs  = inputs
-        self.targets = targets
+    def __init__(self, inputs: np.ndarray, heatmaps: np.ndarray):
+        self.inputs   = inputs
+        self.heatmaps = heatmaps
 
     def __len__(self):
         return len(self.inputs)
 
     def __getitem__(self, idx):
-        x = grid_to_tensor(self.inputs[idx])           # (5, H, W)
-        y = (self.targets[idx] == 1).astype(np.float32)  # бинарная маска пути
-        y = torch.from_numpy(y).unsqueeze(0)           # (1, H, W)
+        x = grid_to_tensor(self.inputs[idx])                          # (5, H, W)
+        y = torch.from_numpy(self.heatmaps[idx]).unsqueeze(0)        # (1, H, W)
         return x, y
 
 
@@ -81,7 +83,7 @@ def train_epoch(model, loader, optimizer, criterion, device):
 def eval_epoch(model, loader, criterion, device):
     model.eval()
     total_loss = 0
-    total_iou  = 0
+    total_peak_sim = 0
     with torch.no_grad():
         for x, y in loader:
             x, y = x.to(device), y.to(device)
@@ -89,14 +91,16 @@ def eval_epoch(model, loader, criterion, device):
             loss = criterion(pred, y)
             total_loss += loss.item()
 
-            # IoU для пути (класс 1)
-            pred_bin = (torch.sigmoid(pred) > 0.5).float()
-            intersection = (pred_bin * y).sum()
-            union = (pred_bin + y).clamp(0, 1).sum()
-            iou = (intersection / (union + 1e-6)).item()
-            total_iou += iou
+            # Peak similarity: корреляция между предсказанной и целевой тепловой картой
+            pred_sig = torch.sigmoid(pred)
+            # Нормализуем оба до [0,1] по батчу
+            p_flat = pred_sig.view(pred_sig.size(0), -1)
+            y_flat = y.view(y.size(0), -1)
+            # Cosine similarity по пространственным картам
+            cos_sim = torch.nn.functional.cosine_similarity(p_flat, y_flat, dim=1).mean()
+            total_peak_sim += cos_sim.item()
 
-    return total_loss / len(loader), total_iou / len(loader)
+    return total_loss / len(loader), total_peak_sim / len(loader)
 
 
 # ─── Главная функция ──────────────────────────────────────────────────────────
@@ -105,10 +109,9 @@ def main():
     # ── Инициализация ClearML задачи ──
     task = Task.init(
         project_name="DroneTrack",
-        task_name="UNet Path Generator v1",
-        output_uri=True,
+        task_name="UNet Heatmap Waypoints v3",
     )
-    task.add_tags(["unet", "path-generation", "preliminary"])
+    task.add_tags(["unet", "heatmap", "waypoints", "bfs"])
     task.connect(HYPERPARAMS)
     logger = task.get_logger()
 
@@ -117,33 +120,41 @@ def main():
     print(f"Устройство: {device}")
 
     # ── Данные ──
-    print("Генерация датасета...")
-    inputs, targets = generate_dataset(
-        n_samples=hp["n_samples"],
-        grid_size=hp["grid_size"],
-        n_gates=hp["n_gates"],
-        n_rings=hp["n_rings"],
-        n_poles=hp["n_poles"],
-        seed=hp["seed"],
-    )
-
-    # Сохраняем локально и загружаем в ClearML Dataset
     os.makedirs("data", exist_ok=True)
-    np.save("data/inputs.npy", inputs)
-    np.save("data/targets.npy", targets)
+    if (os.path.exists("data/inputs.npy")
+            and os.path.exists("data/heatmaps.npy")
+            and os.path.exists("data/paths.npy")):
+        print("Загрузка существующего датасета...")
+        inputs   = np.load("data/inputs.npy")
+        heatmaps = np.load("data/heatmaps.npy")
+        print(f"Загружено {len(inputs)} примеров из data/")
+    else:
+        print("Генерация датасета...")
+        inputs, heatmaps, paths = generate_dataset(
+            n_samples=hp["n_samples"],
+            grid_size=hp["grid_size"],
+            n_gates=hp["n_gates"],
+            n_rings=hp["n_rings"],
+            n_poles=hp["n_poles"],
+            seed=hp["seed"],
+        )
+        np.save("data/inputs.npy",   inputs)
+        np.save("data/heatmaps.npy", heatmaps)
+        np.save("data/paths.npy",    paths)
 
-    clearml_dataset = ClearMLDataset.create(
-        dataset_project="DroneTrack",
-        dataset_name="Synthetic Tracks",
-    )
-    clearml_dataset.add_files("data/inputs.npy")
-    clearml_dataset.add_files("data/targets.npy")
-    clearml_dataset.upload()
-    clearml_dataset.finalize()
-    print(f"Датасет загружен в ClearML (ID: {clearml_dataset.id})")
+        clearml_dataset = ClearMLDataset.create(
+            dataset_project="DroneTrack",
+            dataset_name="Synthetic Tracks v3",
+        )
+        clearml_dataset.add_files("data/inputs.npy")
+        clearml_dataset.add_files("data/heatmaps.npy")
+        clearml_dataset.add_files("data/paths.npy")
+        clearml_dataset.upload()
+        clearml_dataset.finalize()
+        print(f"Датасет загружен в ClearML (ID: {clearml_dataset.id})")
 
     # ── DataLoader ──
-    dataset = TrackDataset(inputs, targets)
+    dataset = TrackDataset(inputs, heatmaps)
     n_train = int(len(dataset) * hp["train_ratio"])
     n_val   = len(dataset) - n_train
     train_ds, val_ds = random_split(
@@ -161,44 +172,52 @@ def main():
     logger.report_table(
         title="Model Info", series="Architecture",
         iteration=0,
-        table_plot={"Property": list(info.keys()), "Value": list(info.values())},
+        table_plot=pd.DataFrame({"Property": list(info.keys()), "Value": list(info.values())}),
     )
 
-    # Используем BCEWithLogitsLoss + pos_weight для несбалансированных данных
-    # (путь занимает малую часть карты)
-    pos_weight = torch.tensor([10.0]).to(device)
-    criterion  = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
-    optimizer  = torch.optim.AdamW(model.parameters(), lr=hp["lr"], weight_decay=hp["weight_decay"])
-    scheduler  = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=hp["epochs"])
+    # MSE loss для регрессии тепловой карты
+    # Sigmoid применяется внутри — используем BCEWithLogitsLoss (лучше числено)
+    # Target: нормализованная тепловая карта [0, 1]
+    criterion = nn.BCEWithLogitsLoss()
+    optimizer = torch.optim.AdamW(model.parameters(), lr=hp["lr"], weight_decay=hp["weight_decay"])
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=hp["epochs"])
 
     # ── Цикл обучения ──
-    best_val_iou = 0.0
+    best_val_sim    = 0.0
+    patience_counter = 0
     os.makedirs("models", exist_ok=True)
 
     for epoch in range(1, hp["epochs"] + 1):
         train_loss = train_epoch(model, train_loader, optimizer, criterion, device)
-        val_loss, val_iou = eval_epoch(model, val_loader, criterion, device)
+        val_loss, val_sim = eval_epoch(model, val_loader, criterion, device)
         scheduler.step()
 
-        # Логируем в ClearML
-        logger.report_scalar("Loss", "train", value=train_loss, iteration=epoch)
-        logger.report_scalar("Loss", "val",   value=val_loss,   iteration=epoch)
-        logger.report_scalar("IoU (path)", "val", value=val_iou, iteration=epoch)
-        logger.report_scalar("LR", "lr",
-                             value=scheduler.get_last_lr()[0], iteration=epoch)
+        logger.report_scalar("Loss",           "train", value=train_loss, iteration=epoch)
+        logger.report_scalar("Loss",           "val",   value=val_loss,   iteration=epoch)
+        logger.report_scalar("Peak Similarity","val",   value=val_sim,    iteration=epoch)
+        logger.report_scalar("LR",             "lr",    value=scheduler.get_last_lr()[0], iteration=epoch)
 
+        improved = val_sim > best_val_sim
+        marker   = " ★" if improved else ""
         print(f"Epoch {epoch:02d}/{hp['epochs']} | "
               f"train_loss={train_loss:.4f} | "
               f"val_loss={val_loss:.4f} | "
-              f"val_iou={val_iou:.4f}")
+              f"val_sim={val_sim:.4f}{marker}")
 
-        # Сохраняем лучшую модель
-        if val_iou > best_val_iou:
-            best_val_iou = val_iou
+        if improved:
+            best_val_sim     = val_sim
+            patience_counter = 0
             torch.save(model.state_dict(), "models/best_model.pt")
+        else:
+            patience_counter += 1
 
-    logger.report_single_value("best_val_iou", best_val_iou)
-    print(f"\nОбучение завершено! Best val IoU: {best_val_iou:.4f}")
+        if patience_counter >= hp["early_stop_patience"]:
+            print(f"\nEarly stopping: similarity не улучшалась {hp['early_stop_patience']} эпох подряд.")
+            break
+
+    task.upload_artifact("best_model", "models/best_model.pt")
+    logger.report_single_value("best_val_similarity", best_val_sim)
+    print(f"\nОбучение завершено! Best val similarity: {best_val_sim:.4f}")
     print("Метрики доступны в ClearML: https://app.clear.ml")
 
     task.close()
