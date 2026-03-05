@@ -1,0 +1,13 @@
+[project]
+name = "drones-races-maps-generation"
+version = "0.1.0"
+description = "Automatic drone racing track configuration generator using ML"
+requires-python = ">=3.12"
+dependencies = [
+    "clearml>=2.0.2",
+    "matplotlib>=3.10.0",
+    "numpy>=1.26.0,<2.2",
+    "torch>=2.0.0",
+    "scikit-learn>=1.7.0",
+    "tqdm>=4.0.0",
+]
