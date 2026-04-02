@@ -1,12 +1,16 @@
 """
 Rule-based генератор валидных конфигураций ворот для дрон-рейсинга.
 
-Стратегия: размещаем ворота по замкнутому контуру (деформированный круг),
-затем добавляем шум для разнообразия. Это гарантирует замкнутость.
+Стратегия:
+1. Находим seed-конфигурации случайным перебором
+2. Массово генерируем новые через деформацию seed'ов
+
+Ограничение на расстояние — только между СОСЕДНИМИ по маршруту воротами.
 """
 
 import numpy as np
 from pathlib import Path
+from collections import defaultdict
 
 # Ограничения
 ARENA_SIZE = 10.0
@@ -24,135 +28,160 @@ MIN_GATES = 5
 MAX_GATES = 10
 
 
-def check_bounds(x: float, y: float) -> bool:
-    return WORK_MIN <= x <= WORK_MAX and WORK_MIN <= y <= WORK_MAX
+def validate_config(config: np.ndarray) -> bool:
+    """
+    Проверяет все ограничения конфигурации.
+    Расстояние проверяется только между соседними по маршруту воротами.
+    """
+    n = len(config)
+    if n < MIN_GATES or n > MAX_GATES:
+        return False
 
+    # Границы
+    if np.any(config[:, 0] < WORK_MIN) or np.any(config[:, 0] > WORK_MAX):
+        return False
+    if np.any(config[:, 1] < WORK_MIN) or np.any(config[:, 1] > WORK_MAX):
+        return False
 
-def check_distance(x1: float, y1: float, x2: float, y2: float) -> bool:
-    d = np.hypot(x2 - x1, y2 - y1)
-    return MIN_DIST <= d <= MAX_DIST
-
-
-def check_angle_diff(a1: float, a2: float) -> bool:
-    diff = abs(a1 - a2) % (2 * np.pi)
-    if diff > np.pi:
-        diff = 2 * np.pi - diff
-    return diff <= MAX_ANGLE_DIFF
-
-
-def check_min_distance_to_all(x: float, y: float, gates: list, min_dist: float = MIN_DIST) -> bool:
-    for gx, gy, _ in gates:
-        if np.hypot(x - gx, y - gy) < min_dist:
+    # Расстояния между соседними (включая замыкание last→first)
+    for i in range(n):
+        j = (i + 1) % n
+        d = np.hypot(config[j, 0] - config[i, 0], config[j, 1] - config[i, 1])
+        if d < MIN_DIST or d > MAX_DIST:
             return False
+
+    # Углы между соседними
+    for i in range(n):
+        j = (i + 1) % n
+        diff = abs(config[i, 2] - config[j, 2]) % (2 * np.pi)
+        if diff > np.pi:
+            diff = 2 * np.pi - diff
+        if diff > MAX_ANGLE_DIFF:
+            return False
+
     return True
 
 
-def generate_config(rng: np.random.Generator, max_attempts: int = 200) -> np.ndarray | None:
-    """
-    Генерирует одну валидную конфигурацию ворот.
-
-    Стратегия:
-    1. Выбираем N ворот, равномерно распределяем углы по кругу
-    2. Сэмплируем радиус для каждых ворот (с деформацией)
-    3. Добавляем шум к позициям
-    4. Проверяем все ограничения
-    """
-    n_gates = rng.integers(MIN_GATES, MAX_GATES + 1)
+def _find_seeds(rng: np.random.Generator, n_per_size: int = 20,
+                max_attempts: int = 500_000) -> dict[int, list[np.ndarray]]:
+    """Находит seed-конфигурации для каждого N случайным перебором."""
+    seeds = defaultdict(list)
+    needed = {n: n_per_size for n in range(MIN_GATES, MAX_GATES + 1)}
 
     for _ in range(max_attempts):
-        # Базовые углы по кругу (равномерно, с шумом)
-        base_angles = np.linspace(0, 2 * np.pi, n_gates, endpoint=False)
-        angle_noise = rng.uniform(-0.3, 0.3, size=n_gates)
-        angles = base_angles + angle_noise
-        # Сортируем, чтобы порядок был по часовой
-        angles = np.sort(angles) % (2 * np.pi)
+        if all(v <= 0 for v in needed.values()):
+            break
 
-        # Радиусы (деформированный круг)
-        base_radius = rng.uniform(1.2, 1.8)
-        radii = base_radius + rng.uniform(-0.4, 0.4, size=n_gates)
-        radii = np.clip(radii, 0.5, 2.0)
-
-        # Центр с небольшим смещением
-        cx = WORK_CENTER + rng.uniform(-0.5, 0.5)
-        cy = WORK_CENTER + rng.uniform(-0.5, 0.5)
-
-        # Координаты ворот
-        xs = cx + radii * np.cos(angles)
-        ys = cy + radii * np.sin(angles)
-
-        # Проверка границ
-        if not all(check_bounds(x, y) for x, y in zip(xs, ys)):
+        n = rng.integers(MIN_GATES, MAX_GATES + 1)
+        if needed.get(n, 0) <= 0:
             continue
 
-        # Углы наклона ворот — примерно касательные к контуру + шум
-        gate_angles = np.zeros(n_gates)
-        for i in range(n_gates):
-            tangent = angles[i] + np.pi / 2  # касательная к окружности
-            gate_angles[i] = (tangent + rng.uniform(-np.pi * 0.8, np.pi * 0.8)) % (2 * np.pi)
+        xs = rng.uniform(WORK_MIN, WORK_MAX, size=n)
+        ys = rng.uniform(WORK_MIN, WORK_MAX, size=n)
 
-        # Собираем конфигурацию
-        gates = list(zip(xs, ys, gate_angles))
+        # Генерируем углы с малыми приращениями
+        a0 = rng.uniform(0, 2 * np.pi)
+        deltas = rng.uniform(-0.8, 0.8, size=n - 1)
+        angles = np.concatenate([[a0], a0 + np.cumsum(deltas)]) % (2 * np.pi)
 
-        # Проверяем расстояния между соседними
-        valid = True
-        for i in range(n_gates):
-            j = (i + 1) % n_gates
-            if not check_distance(xs[i], ys[i], xs[j], ys[j]):
-                valid = False
-                break
+        config = np.column_stack([xs, ys, angles]).astype(np.float32)
 
-        if not valid:
-            continue
+        if validate_config(config):
+            seeds[n].append(config)
+            needed[n] -= 1
 
-        # Проверяем разницу углов соседних
-        for i in range(n_gates):
-            j = (i + 1) % n_gates
-            if not check_angle_diff(gate_angles[i], gate_angles[j]):
-                valid = False
-                break
+    return dict(seeds)
 
-        if not valid:
-            continue
 
-        # Проверяем мин. расстояние между НЕсоседними воротами
-        for i in range(n_gates):
-            for j in range(i + 2, n_gates):
-                if i == 0 and j == n_gates - 1:
-                    continue  # соседние (замкнутость)
-                d = np.hypot(xs[i] - xs[j], ys[i] - ys[j])
-                if d < MIN_DIST:
-                    valid = False
-                    break
-            if not valid:
-                break
+def perturb_config(config: np.ndarray, rng: np.random.Generator,
+                   noise_scale: float = 0.4) -> np.ndarray:
+    """Деформирует конфигурацию случайным шумом."""
+    new = config.copy()
+    n = len(config)
 
-        if not valid:
-            continue
+    # Позиционный шум
+    new[:, 0] += rng.normal(0, noise_scale, size=n)
+    new[:, 1] += rng.normal(0, noise_scale, size=n)
+    new[:, 2] += rng.normal(0, noise_scale * 0.5, size=n)
 
-        return np.array(gates, dtype=np.float32)
+    # Клэмп
+    new[:, 0] = np.clip(new[:, 0], WORK_MIN, WORK_MAX)
+    new[:, 1] = np.clip(new[:, 1], WORK_MIN, WORK_MAX)
+    new[:, 2] = new[:, 2] % (2 * np.pi)
 
-    return None
+    # Случайные трансформации для разнообразия
+    r = rng.random()
+    if r < 0.2:
+        # Глобальный сдвиг
+        dx, dy = rng.normal(0, 0.3, size=2)
+        new[:, 0] = np.clip(new[:, 0] + dx, WORK_MIN, WORK_MAX)
+        new[:, 1] = np.clip(new[:, 1] + dy, WORK_MIN, WORK_MAX)
+    elif r < 0.4:
+        # Отражение
+        axis = rng.integers(0, 2)
+        new[:, axis] = WORK_MIN + WORK_MAX - new[:, axis]
+    elif r < 0.6:
+        # Поворот вокруг центра масс
+        theta = rng.uniform(0, 2 * np.pi)
+        cx, cy = new[:, 0].mean(), new[:, 1].mean()
+        cos_t, sin_t = np.cos(theta), np.sin(theta)
+        dx, dy = new[:, 0] - cx, new[:, 1] - cy
+        new[:, 0] = np.clip(cx + dx * cos_t - dy * sin_t, WORK_MIN, WORK_MAX)
+        new[:, 1] = np.clip(cy + dx * sin_t + dy * cos_t, WORK_MIN, WORK_MAX)
+        new[:, 2] = (new[:, 2] + theta) % (2 * np.pi)
+    elif r < 0.7:
+        # Масштабирование
+        scale = rng.uniform(0.8, 1.2)
+        cx, cy = new[:, 0].mean(), new[:, 1].mean()
+        new[:, 0] = np.clip(cx + (new[:, 0] - cx) * scale, WORK_MIN, WORK_MAX)
+        new[:, 1] = np.clip(cy + (new[:, 1] - cy) * scale, WORK_MIN, WORK_MAX)
+
+    return new
 
 
 def generate_dataset(n_samples: int = 10000, seed: int = 42) -> list[np.ndarray]:
     """Генерирует датасет валидных конфигураций."""
     rng = np.random.default_rng(seed)
-    configs = []
+
+    # Шаг 1: находим seeds
+    print("Поиск seed-конфигураций...")
+    seeds = _find_seeds(rng, n_per_size=30)
+    total_seeds = sum(len(v) for v in seeds.values())
+    print(f"Найдено {total_seeds} seeds для n={sorted(seeds.keys())}")
+
+    if total_seeds == 0:
+        raise RuntimeError("Не удалось найти seed-конфигурации!")
+
+    # Собираем все seeds в плоский список
+    all_seeds = []
+    for configs in seeds.values():
+        all_seeds.extend(configs)
+
+    # Шаг 2: генерируем через деформацию
+    print("Генерация через деформацию...")
+    configs = list(all_seeds)  # начинаем с seeds
     attempts = 0
 
     while len(configs) < n_samples:
-        config = generate_config(rng)
+        # Выбираем базу: seed или уже сгенерированную
+        if len(configs) > 50 and rng.random() < 0.7:
+            base = configs[rng.integers(0, len(configs))]
+        else:
+            base = all_seeds[rng.integers(0, len(all_seeds))]
+
+        noise = rng.uniform(0.15, 0.6)
+        new_config = perturb_config(base, rng, noise_scale=noise)
         attempts += 1
-        if config is not None:
-            configs.append(config)
 
-        if len(configs) % 1000 == 0 and len(configs) > 0:
-            rate = len(configs) / attempts * 100
-            print(f"  Сгенерировано {len(configs)}/{n_samples} "
-                  f"(success rate: {rate:.0f}%)")
+        if validate_config(new_config):
+            configs.append(new_config)
 
-    rate = len(configs) / attempts * 100
-    print(f"  Итого: {len(configs)} конфигураций за {attempts} попыток "
+        if len(configs) % 2000 == 0:
+            rate = len(configs) / max(attempts, 1) * 100
+            print(f"  {len(configs)}/{n_samples} (perturbation success: {rate:.0f}%)")
+
+    rate = len(configs) / max(attempts, 1) * 100
+    print(f"  Итого: {len(configs)} за {attempts} деформаций "
           f"(success rate: {rate:.0f}%)")
     return configs
 
@@ -180,6 +209,12 @@ if __name__ == "__main__":
     print(f"  Всего конфигураций: {len(configs)}")
     print(f"  Длины: min={min(lengths)}, max={max(lengths)}, "
           f"mean={np.mean(lengths):.1f}")
+
+    # Распределение по длинам
+    from collections import Counter
+    cnt = Counter(lengths)
+    for n in sorted(cnt):
+        print(f"  n={n}: {cnt[n]} ({cnt[n]/len(configs)*100:.1f}%)")
 
     save_path = Path(__file__).parent / "data" / "gate_configs.npz"
     save_dataset(configs, save_path)

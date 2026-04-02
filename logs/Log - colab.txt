@@ -1,0 +1,77 @@
+1775126156838 c765d786b879 info ClearML Task: created new task id=9e50c0411d0b4c54a32b14fc2ac8b687
+2026-04-02 10:35:56,869 - clearml.Task - INFO - No repository found, storing script code instead
+1775126163465 c765d786b879 info ClearML results page: https://app.clear.ml/projects/8e87b6e306de457088afd9d4fc0f6406/experiments/9e50c0411d0b4c54a32b14fc2ac8b687/output/log
+1775126163611 c765d786b879 info 2026-04-02 10:36:03,610 - clearml.resource_monitor - WARNING - Could not fetch GPU stats: NVML Shared Library Not Found
+1775126165597 c765d786b879 info ClearML Monitor: GPU monitoring failed getting GPU reading, switching off GPU monitoring
+1775126171467 c765d786b879 info Параметров в модели: 135,943
+Итераций: 1500, эпизодов/итерацию: 40
+Iter    1/1500 | phase1(3-4) | reward=  2.78 | validity=  4.0% | loss=24.7070
+1775126173698 c765d786b879 info   -> Лучшая модель! (validity=4.0%)
+1775126178001 c765d786b879 info Iter   25/1500 | phase1(3-4) | reward=  1.51 | validity=  2.0% | loss=21.6750
+1775126183139 c765d786b879 info Iter   50/1500 | phase1(3-4) | reward=  0.69 | validity=  2.0% | loss=22.3450
+1775126187401 c765d786b879 info Iter   75/1500 | phase1(3-4) | reward=  1.19 | validity=  0.0% | loss=22.2585
+1775126192166 c765d786b879 info Iter  100/1500 | phase1(3-4) | reward=  1.57 | validity=  2.0% | loss=23.0907
+1775126197427 c765d786b879 info Iter  125/1500 | phase1(3-4) | reward=  3.84 | validity=  2.0% | loss=25.1434
+1775126201920 c765d786b879 info Iter  150/1500 | phase1(3-4) | reward=  2.88 | validity=  0.0% | loss=20.1928
+1775126207192 c765d786b879 info Iter  175/1500 | phase1(3-4) | reward=  4.35 | validity=  0.0% | loss=13.5443
+1775126211686 c765d786b879 info Iter  200/1500 | phase1(3-4) | reward=  4.69 | validity=  0.0% | loss=16.0887
+1775126215974 c765d786b879 info Iter  225/1500 | phase1(3-4) | reward=  5.18 | validity=  4.0% | loss=18.1343
+1775126221256 c765d786b879 info Iter  250/1500 | phase1(3-4) | reward=  5.88 | validity=  4.0% | loss=12.8578
+1775126225483 c765d786b879 info Iter  275/1500 | phase1(3-4) | reward=  6.63 | validity=  2.0% | loss=11.6813
+1775126229784 c765d786b879 info Iter  300/1500 | phase1(3-4) | reward=  5.57 | validity=  2.0% | loss=9.7878
+1775126235084 c765d786b879 info Iter  325/1500 | phase1(3-4) | reward=  4.88 | validity=  0.0% | loss=17.1127
+1775126239311 c765d786b879 info Iter  350/1500 | phase1(3-4) | reward=  6.05 | validity=  4.0% | loss=11.5189
+1775126243878 c765d786b879 info Iter  375/1500 | phase1(3-4) | reward=  5.89 | validity=  8.0% | loss=11.9385
+1775126246239 c765d786b879 info   -> Лучшая модель! (validity=8.0%)
+1775126251409 c765d786b879 info Iter  400/1500 | phase2(3-6) | reward=  2.62 | validity=  0.0% | loss=16.2382
+1775126257210 c765d786b879 info Iter  425/1500 | phase2(3-6) | reward=  1.49 | validity=  2.0% | loss=24.1649
+1775126262922 c765d786b879 info Iter  450/1500 | phase2(3-6) | reward=  3.69 | validity=  8.0% | loss=14.3083
+1775126268315 c765d786b879 info Iter  475/1500 | phase2(3-6) | reward=  1.15 | validity=  0.0% | loss=21.7325
+1775126274567 c765d786b879 info Iter  500/1500 | phase2(3-6) | reward=  2.75 | validity=  4.0% | loss=18.6136
+1775126279852 c765d786b879 info Iter  525/1500 | phase2(3-6) | reward=  3.63 | validity=  4.0% | loss=17.1967
+1775126286111 c765d786b879 info Iter  550/1500 | phase2(3-6) | reward=  4.11 | validity=  2.0% | loss=12.5028
+1775126291417 c765d786b879 info Iter  575/1500 | phase2(3-6) | reward=  2.41 | validity=  2.0% | loss=17.4639
+1775126297567 c765d786b879 info Iter  600/1500 | phase2(3-6) | reward= -0.44 | validity=  0.0% | loss=14.2898
+1775126303035 c765d786b879 info Iter  625/1500 | phase2(3-6) | reward=  0.29 | validity=  0.0% | loss=15.6091
+1775126308579 c765d786b879 info Iter  650/1500 | phase2(3-6) | reward= -1.19 | validity=  0.0% | loss=26.6889
+1775126314530 c765d786b879 info Iter  675/1500 | phase2(3-6) | reward= -0.28 | validity=  0.0% | loss=17.9356
+1775126319843 c765d786b879 info Iter  700/1500 | phase2(3-6) | reward=  0.20 | validity=  2.0% | loss=16.6863
+1775126326199 c765d786b879 info Iter  725/1500 | phase2(3-6) | reward= -1.91 | validity=  2.0% | loss=17.3976
+1775126331493 c765d786b879 info Iter  750/1500 | phase2(3-6) | reward= -2.42 | validity=  0.0% | loss=20.0673
+1775126337787 c765d786b879 info Iter  775/1500 | phase2(3-6) | reward= -1.51 | validity=  0.0% | loss=22.0317
+1775126343055 c765d786b879 info Iter  800/1500 | phase2(3-6) | reward= -3.03 | validity=  2.0% | loss=23.7878
+1775126348763 c765d786b879 info Iter  825/1500 | phase2(3-6) | reward= -1.73 | validity=  2.0% | loss=17.4499
+1775126355502 c765d786b879 info Iter  850/1500 | phase3(3-8) | reward= -6.48 | validity=  4.0% | loss=20.5965
+1775126362259 c765d786b879 info Iter  875/1500 | phase3(3-8) | reward= -8.16 | validity=  2.0% | loss=23.9993
+1775126368991 c765d786b879 info Iter  900/1500 | phase3(3-8) | reward= -6.90 | validity=  4.0% | loss=25.7676
+1775126376162 c765d786b879 info Iter  925/1500 | phase3(3-8) | reward= -4.90 | validity=  0.0% | loss=17.1200
+1775126382601 c765d786b879 info Iter  950/1500 | phase3(3-8) | reward= -7.58 | validity=  2.0% | loss=21.7685
+1775126389903 c765d786b879 info Iter  975/1500 | phase3(3-8) | reward= -5.28 | validity=  2.0% | loss=25.4983
+1775126396136 c765d786b879 info Iter 1000/1500 | phase3(3-8) | reward= -3.58 | validity=  2.0% | loss=24.4853
+1775126403178 c765d786b879 info Iter 1025/1500 | phase3(3-8) | reward= -4.96 | validity=  0.0% | loss=17.7007
+1775126409332 c765d786b879 info Iter 1050/1500 | phase3(3-8) | reward= -5.39 | validity=  0.0% | loss=22.5963
+1775126416597 c765d786b879 info Iter 1075/1500 | phase3(3-8) | reward= -4.20 | validity=  0.0% | loss=19.5413
+1775126422865 c765d786b879 info Iter 1100/1500 | phase3(3-8) | reward= -4.78 | validity=  0.0% | loss=29.9766
+1775126430270 c765d786b879 info Iter 1125/1500 | phase3(3-8) | reward= -2.50 | validity=  0.0% | loss=22.6103
+1775126436539 c765d786b879 info Iter 1150/1500 | phase3(3-8) | reward= -6.72 | validity=  0.0% | loss=29.3687
+1775126443864 c765d786b879 info Iter 1175/1500 | phase3(3-8) | reward= -1.87 | validity=  0.0% | loss=24.2131
+1775126450034 c765d786b879 info Iter 1200/1500 | phase3(3-8) | reward= -5.27 | validity=  0.0% | loss=15.1688
+1775126457243 c765d786b879 info Iter 1225/1500 | phase3(3-8) | reward= -3.78 | validity=  2.0% | loss=26.8909
+1775126463541 c765d786b879 info Iter 1250/1500 | phase3(3-8) | reward= -3.59 | validity=  2.0% | loss=28.0718
+1775126470868 c765d786b879 info Iter 1275/1500 | phase3(3-8) | reward= -3.87 | validity=  0.0% | loss=21.5196
+1775126477025 c765d786b879 info Iter 1300/1500 | phase3(3-8) | reward= -2.85 | validity=  0.0% | loss=22.5458
+1775126484327 c765d786b879 info Iter 1325/1500 | phase3(3-8) | reward= -3.11 | validity=  0.0% | loss=16.3435
+1775126490480 c765d786b879 info Iter 1350/1500 | phase3(3-8) | reward= -2.66 | validity=  2.0% | loss=24.4419
+1775126497579 c765d786b879 info Iter 1375/1500 | phase3(3-8) | reward= -1.35 | validity=  4.0% | loss=18.7125
+1775126503758 c765d786b879 info Iter 1400/1500 | phase3(3-8) | reward= -0.11 | validity=  2.0% | loss=20.8491
+1775126510919 c765d786b879 info Iter 1425/1500 | phase3(3-8) | reward= -4.64 | validity=  2.0% | loss=26.1204
+1775126517186 c765d786b879 info Iter 1450/1500 | phase3(3-8) | reward= -0.94 | validity=  4.0% | loss=21.4172
+1775126524510 c765d786b879 info Iter 1475/1500 | phase3(3-8) | reward= -1.21 | validity=  2.0% | loss=22.7871
+1775126530780 c765d786b879 info Iter 1500/1500 | phase3(3-8) | reward= -2.22 | validity=  4.0% | loss=21.8174
+============================================================
+ФИНАЛЬНАЯ ОЦЕНКА
+1775126532768 c765d786b879 info Validity rate: 4.5% (9/200)
+Mean reward: -1.23
+1775126534266 c765d786b879 info Графики: /content/Project2.0/data/training_curves.png
+1775126540974 c765d786b879 info Визуализация: /content/Project2.0/data/viz_rl_results.png
+Готово!

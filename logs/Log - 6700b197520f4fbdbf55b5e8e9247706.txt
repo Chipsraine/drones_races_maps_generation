@@ -1,0 +1,77 @@
+1775126982903 fedora info ClearML Task: created new task id=6700b197520f4fbdbf55b5e8e9247706
+ClearML results page: https://app.clear.ml/projects/8e87b6e306de457088afd9d4fc0f6406/experiments/6700b197520f4fbdbf55b5e8e9247706/output/log
+1775126983967 fedora error Could not fetch GPU stats: NVML Shared Library Not Found
+1775126988847 fedora info ClearML Monitor: GPU monitoring failed getting GPU reading, switching off GPU monitoring
+1775126989674 fedora info Параметров в модели: 135,943
+Итераций: 1500, эпизодов/итерацию: 40
+Iter    1/1500 | phase1(3-4) | reward=  3.08 | validity=  4.0% | loss=24.9711
+1775127001846 fedora info   -> Лучшая модель! (validity=4.0%)
+1775127003647 fedora info Iter   25/1500 | phase1(3-4) | reward=  2.81 | validity=  8.0% | loss=18.1155
+1775127015155 fedora info   -> Лучшая модель! (validity=8.0%)
+1775127016994 fedora info Iter   50/1500 | phase1(3-4) | reward=  2.13 | validity=  8.0% | loss=20.7747
+1775127018821 fedora info Iter   75/1500 | phase1(3-4) | reward=  1.15 | validity=  4.0% | loss=22.3099
+1775127020693 fedora info Iter  100/1500 | phase1(3-4) | reward=  3.26 | validity=  4.0% | loss=16.3111
+1775127022863 fedora info Iter  125/1500 | phase1(3-4) | reward=  1.90 | validity=  2.0% | loss=20.7982
+1775127024905 fedora info Iter  150/1500 | phase1(3-4) | reward=  3.46 | validity=  4.0% | loss=19.1567
+1775127027067 fedora info Iter  175/1500 | phase1(3-4) | reward=  4.48 | validity=  8.0% | loss=15.8562
+1775127029295 fedora info Iter  200/1500 | phase1(3-4) | reward=  5.82 | validity=  2.0% | loss=10.9453
+1775127031571 fedora info Iter  225/1500 | phase1(3-4) | reward=  4.27 | validity=  6.0% | loss=20.3245
+1775127033841 fedora info Iter  250/1500 | phase1(3-4) | reward=  3.80 | validity=  4.0% | loss=20.0055
+1775127035957 fedora info Iter  275/1500 | phase1(3-4) | reward=  7.95 | validity=  8.0% | loss=10.0063
+1775127038250 fedora info Iter  300/1500 | phase1(3-4) | reward=  6.44 | validity=  6.0% | loss=9.5650
+1775127040321 fedora info Iter  325/1500 | phase1(3-4) | reward=  4.82 | validity= 14.0% | loss=13.5047
+1775127052478 fedora info   -> Лучшая модель! (validity=14.0%)
+1775127054645 fedora info Iter  350/1500 | phase1(3-4) | reward=  5.46 | validity=  4.0% | loss=14.4844
+1775127056814 fedora info Iter  375/1500 | phase1(3-4) | reward=  5.15 | validity=  4.0% | loss=13.3459
+1775127059126 fedora info Iter  400/1500 | phase1(3-4) | reward=  6.38 | validity=  6.0% | loss=10.4048
+1775127061343 fedora info Iter  425/1500 | phase1(3-4) | reward=  5.14 | validity= 12.0% | loss=13.5078
+1775127063454 fedora info Iter  450/1500 | phase1(3-4) | reward=  3.83 | validity=  8.0% | loss=13.7991
+1775127065675 fedora info Iter  475/1500 | phase1(3-4) | reward=  3.83 | validity=  6.0% | loss=11.0177
+1775127068026 fedora info Iter  500/1500 | phase1(3-4) | reward=  4.25 | validity=  2.0% | loss=15.8849
+1775127070367 fedora info Iter  525/1500 | phase1(3-4) | reward=  5.58 | validity=  2.0% | loss=13.6237
+1775127073004 fedora info Iter  550/1500 | phase1(3-4) | reward=  4.63 | validity=  8.0% | loss=12.9996
+1775127075829 fedora info Iter  575/1500 | phase1(3-4) | reward=  5.08 | validity=  2.0% | loss=15.5291
+1775127078693 fedora info Iter  600/1500 | phase1(3-4) | reward=  3.71 | validity= 10.0% | loss=17.0833
+1775127081576 fedora info Iter  625/1500 | phase2(3-5) | reward=  5.00 | validity=  2.0% | loss=10.1601
+1775127085168 fedora info Iter  650/1500 | phase2(3-5) | reward=  4.15 | validity=  0.0% | loss=8.4737
+1775127088187 fedora info Iter  675/1500 | phase2(3-5) | reward=  5.27 | validity=  6.0% | loss=11.3057
+1775127091395 fedora info Iter  700/1500 | phase2(3-5) | reward=  3.84 | validity=  4.0% | loss=14.7637
+1775127094409 fedora info Iter  725/1500 | phase2(3-5) | reward=  4.10 | validity=  4.0% | loss=13.7171
+1775127097493 fedora info Iter  750/1500 | phase2(3-5) | reward=  4.06 | validity=  4.0% | loss=10.4340
+1775127100748 fedora info Iter  775/1500 | phase2(3-5) | reward=  5.12 | validity=  4.0% | loss=12.1399
+1775127104162 fedora info Iter  800/1500 | phase2(3-5) | reward=  3.52 | validity=  2.0% | loss=16.1897
+1775127107103 fedora info Iter  825/1500 | phase2(3-5) | reward=  5.09 | validity=  2.0% | loss=10.4868
+1775127110383 fedora info Iter  850/1500 | phase2(3-5) | reward=  3.69 | validity=  4.0% | loss=11.4932
+1775127113475 fedora info Iter  875/1500 | phase2(3-5) | reward=  3.14 | validity=  4.0% | loss=16.4367
+1775127116503 fedora info Iter  900/1500 | phase2(3-5) | reward= -0.83 | validity=  0.0% | loss=22.8317
+1775127119479 fedora info Iter  925/1500 | phase2(3-5) | reward=  1.15 | validity=  0.0% | loss=20.1337
+1775127122586 fedora info Iter  950/1500 | phase2(3-5) | reward=  1.77 | validity=  2.0% | loss=18.6854
+1775127125337 fedora info Iter  975/1500 | phase2(3-5) | reward=  2.28 | validity=  2.0% | loss=15.9143
+1775127128263 fedora info Iter 1000/1500 | phase3(3-6) | reward= -1.66 | validity=  0.0% | loss=27.8417
+1775127131172 fedora info Iter 1025/1500 | phase3(3-6) | reward=  1.20 | validity=  0.0% | loss=14.0558
+1775127134526 fedora info Iter 1050/1500 | phase3(3-6) | reward=  2.32 | validity=  2.0% | loss=13.4169
+1775127137458 fedora info Iter 1075/1500 | phase3(3-6) | reward=  1.24 | validity=  0.0% | loss=15.1871
+1775127140430 fedora info Iter 1100/1500 | phase3(3-6) | reward= -2.19 | validity=  2.0% | loss=18.7626
+1775127143490 fedora info Iter 1125/1500 | phase3(3-6) | reward=  0.34 | validity=  0.0% | loss=15.4122
+1775127146611 fedora info Iter 1150/1500 | phase3(3-6) | reward= -0.64 | validity=  2.0% | loss=18.8651
+1775127149965 fedora info Iter 1175/1500 | phase3(3-6) | reward=  1.41 | validity=  0.0% | loss=19.7082
+1775127153284 fedora info Iter 1200/1500 | phase3(3-6) | reward= -0.77 | validity=  0.0% | loss=22.3764
+1775127156184 fedora info Iter 1225/1500 | phase3(3-6) | reward= -0.86 | validity=  0.0% | loss=20.6057
+1775127159223 fedora info Iter 1250/1500 | phase3(3-6) | reward= -1.29 | validity=  2.0% | loss=28.2338
+1775127162198 fedora info Iter 1275/1500 | phase3(3-6) | reward=  2.27 | validity=  0.0% | loss=21.0686
+1775127165550 fedora info Iter 1300/1500 | phase3(3-6) | reward=  0.80 | validity=  4.0% | loss=18.3152
+1775127168463 fedora info Iter 1325/1500 | phase3(3-6) | reward=  0.91 | validity=  2.0% | loss=22.5754
+1775127171385 fedora info Iter 1350/1500 | phase3(3-6) | reward=  1.34 | validity=  4.0% | loss=16.9016
+1775127174883 fedora info Iter 1375/1500 | phase3(3-6) | reward=  1.91 | validity=  2.0% | loss=19.1678
+1775127177940 fedora info Iter 1400/1500 | phase3(3-6) | reward=  3.53 | validity=  0.0% | loss=13.1288
+1775127180877 fedora info Iter 1425/1500 | phase3(3-6) | reward=  1.48 | validity=  0.0% | loss=12.4290
+1775127183840 fedora info Iter 1450/1500 | phase3(3-6) | reward=  3.06 | validity=  2.0% | loss=15.4692
+1775127186890 fedora info Iter 1475/1500 | phase3(3-6) | reward=  3.22 | validity=  6.0% | loss=15.7365
+1775127189820 fedora info Iter 1500/1500 | phase3(3-6) | reward=  2.47 | validity=  0.0% | loss=14.0093
+============================================================
+ФИНАЛЬНАЯ ОЦЕНКА
+1775127194197 fedora info Validity rate: 7.0% (14/200)
+Mean reward: 3.06
+1775127195418 fedora info Графики: /home/username/Документы/Архив/Study/2 курс/ПМИИ/Data-science-and-ML/Project2.0/data/training_curves.png
+1775127198905 fedora info Визуализация: /home/username/Документы/Архив/Study/2 курс/ПМИИ/Data-science-and-ML/Project2.0/data/viz_rl_results.png
+Готово!

@@ -1,0 +1,108 @@
+1775129629385 fedora info ClearML Task: created new task id=7ca72a78c4954ddeab83060393a66c08
+ClearML results page: https://app.clear.ml/projects/8e87b6e306de457088afd9d4fc0f6406/experiments/7ca72a78c4954ddeab83060393a66c08/output/log
+1775129630497 fedora error Could not fetch GPU stats: NVML Shared Library Not Found
+1775129635356 fedora info ClearML Monitor: GPU monitoring failed getting GPU reading, switching off GPU monitoring
+1775129636307 fedora info Параметров в модели: 237,605
+Итераций: 2000, эпизодов/итерацию: 64
+Подход: ALL-AT-ONCE (1 шаг = все ворота)
+Iter    1/2000 | reward=  1.50 | validity=  4.0% | 3g:14% 4g:0% 5g:0% 6g:0% | loss=19.9385
+1775129648172 fedora info   -> Лучшая модель! (validity=4.0%)
+1775129649623 fedora info Iter   25/2000 | reward=  4.53 | validity=  5.0% | 3g:14% 4g:9% 5g:0% 6g:0% | loss=19.1750
+1775129662221 fedora info   -> Лучшая модель! (validity=5.0%)
+1775129663677 fedora info Iter   50/2000 | reward=  5.26 | validity=  7.0% | 3g:21% 4g:9% 5g:0% 6g:0% | loss=19.7439
+1775129675130 fedora info   -> Лучшая модель! (validity=7.0%)
+1775129676655 fedora info Iter   75/2000 | reward=  4.00 | validity=  3.0% | 3g:12% 4g:0% 5g:0% 6g:0% | loss=18.1302
+1775129678286 fedora info Iter  100/2000 | reward=  5.09 | validity=  5.0% | 3g:18% 4g:0% 5g:0% 6g:0% | loss=20.0208
+1775129680242 fedora info Iter  125/2000 | reward=  5.20 | validity=  9.0% | 3g:28% 4g:5% 5g:0% 6g:0% | loss=16.9414
+1775129691483 fedora info   -> Лучшая модель! (validity=9.0%)
+1775129693153 fedora info Iter  150/2000 | reward=  5.37 | validity=  7.0% | 3g:23% 4g:0% 5g:0% 6g:0% | loss=16.3237
+1775129694793 fedora info Iter  175/2000 | reward=  5.78 | validity=  7.0% | 3g:29% 4g:4% 5g:0% 6g:0% | loss=9.9425
+1775129696426 fedora info Iter  200/2000 | reward=  4.98 | validity=  8.0% | 3g:26% 4g:5% 5g:0% 6g:0% | loss=11.9197
+1775129698387 fedora info Iter  225/2000 | reward=  3.89 | validity=  6.0% | 3g:25% 4g:0% 5g:0% 6g:0% | loss=10.5949
+1775129700522 fedora info Iter  250/2000 | reward=  4.77 | validity= 11.0% | 3g:39% 4g:0% 5g:0% 6g:0% | loss=17.1453
+1775129712494 fedora info   -> Лучшая модель! (validity=11.0%)
+1775129714232 fedora info Iter  275/2000 | reward=  2.77 | validity=  2.0% | 3g:8% 4g:0% 5g:0% 6g:0% | loss=19.8850
+1775129715853 fedora info Iter  300/2000 | reward=  4.80 | validity=  6.0% | 3g:24% 4g:3% 5g:0% 6g:0% | loss=16.8381
+1775129717496 fedora info Iter  325/2000 | reward=  5.30 | validity=  5.0% | 3g:17% 4g:5% 5g:0% 6g:0% | loss=15.7470
+1775129719299 fedora info Iter  350/2000 | reward=  5.17 | validity=  5.0% | 3g:22% 4g:0% 5g:0% 6g:0% | loss=16.3662
+1775129721373 fedora info Iter  375/2000 | reward=  5.98 | validity=  6.0% | 3g:30% 4g:0% 5g:0% 6g:0% | loss=13.4738
+1775129723561 fedora info Iter  400/2000 | reward=  6.87 | validity=  9.0% | 3g:29% 4g:0% 5g:0% 6g:0% | loss=13.0677
+1775129725821 fedora info Iter  425/2000 | reward=  5.62 | validity=  7.0% | 3g:33% 4g:0% 5g:0% 6g:0% | loss=17.5374
+1775129727984 fedora info Iter  450/2000 | reward=  5.92 | validity=  5.0% | 3g:20% 4g:4% 5g:0% 6g:0% | loss=16.0124
+1775129730119 fedora info Iter  475/2000 | reward=  7.69 | validity= 10.0% | 3g:38% 4g:4% 5g:0% 6g:0% | loss=9.3048
+1775129732267 fedora info Iter  500/2000 | reward=  5.43 | validity=  4.0% | 3g:24% 4g:0% 5g:0% 6g:0% | loss=12.2035
+1775129734472 fedora info Iter  525/2000 | reward=  8.08 | validity= 12.0% | 3g:38% 4g:0% 5g:0% 6g:0% | loss=13.4413
+1775129746053 fedora info   -> Лучшая модель! (validity=12.0%)
+1775129747793 fedora info Iter  550/2000 | reward=  7.24 | validity= 14.0% | 3g:48% 4g:4% 5g:0% 6g:0% | loss=12.1747
+1775129759315 fedora info   -> Лучшая модель! (validity=14.0%)
+1775129761021 fedora info Iter  575/2000 | reward=  6.79 | validity=  5.0% | 3g:17% 4g:0% 5g:0% 6g:0% | loss=19.9576
+1775129762695 fedora info Iter  600/2000 | reward=  8.02 | validity=  7.0% | 3g:28% 4g:0% 5g:0% 6g:0% | loss=13.0195
+1775129764403 fedora info Iter  625/2000 | reward=  8.17 | validity=  5.0% | 3g:20% 4g:0% 5g:0% 6g:0% | loss=20.9685
+1775129766158 fedora info Iter  650/2000 | reward=  7.37 | validity= 10.0% | 3g:45% 4g:0% 5g:0% 6g:0% | loss=18.4111
+1775129767951 fedora info Iter  675/2000 | reward=  7.88 | validity=  7.0% | 3g:29% 4g:3% 5g:0% 6g:0% | loss=15.3915
+1775129770197 fedora info Iter  700/2000 | reward=  8.18 | validity=  6.0% | 3g:24% 4g:0% 5g:0% 6g:0% | loss=13.2013
+1775129772377 fedora info Iter  725/2000 | reward=  8.48 | validity=  3.0% | 3g:12% 4g:0% 5g:0% 6g:0% | loss=11.6655
+1775129774529 fedora info Iter  750/2000 | reward=  8.98 | validity=  7.0% | 3g:29% 4g:0% 5g:0% 6g:0% | loss=9.7052
+1775129776730 fedora info Iter  775/2000 | reward=  7.44 | validity=  4.0% | 3g:20% 4g:0% 5g:0% 6g:0% | loss=14.6439
+1775129778950 fedora info Iter  800/2000 | reward=  7.88 | validity=  6.0% | 3g:26% 4g:0% 5g:0% 6g:0% | loss=13.5572
+1775129781394 fedora info Iter  825/2000 | reward=  8.84 | validity= 10.0% | 3g:31% 4g:4% 5g:0% 6g:0% | loss=11.5285
+1775129783548 fedora info Iter  850/2000 | reward=  7.73 | validity=  9.0% | 3g:29% 4g:5% 5g:0% 6g:0% | loss=15.6455
+1775129785701 fedora info Iter  875/2000 | reward=  8.14 | validity=  9.0% | 3g:36% 4g:0% 5g:0% 6g:0% | loss=13.5907
+1775129788093 fedora info Iter  900/2000 | reward=  8.30 | validity=  7.0% | 3g:27% 4g:3% 5g:0% 6g:0% | loss=13.8983
+1775129790155 fedora info Iter  925/2000 | reward=  8.35 | validity= 11.0% | 3g:42% 4g:0% 5g:0% 6g:0% | loss=19.5228
+1775129792349 fedora info Iter  950/2000 | reward=  7.62 | validity=  9.0% | 3g:33% 4g:9% 5g:0% 6g:0% | loss=8.3862
+1775129794511 fedora info Iter  975/2000 | reward=  9.10 | validity= 14.0% | 3g:43% 4g:4% 5g:0% 6g:0% | loss=11.4432
+1775129796649 fedora info Iter 1000/2000 | reward=  8.01 | validity= 14.0% | 3g:41% 4g:0% 5g:0% 6g:0% | loss=9.3429
+1775129798787 fedora info Iter 1025/2000 | reward=  7.56 | validity= 10.0% | 3g:30% 4g:3% 5g:0% 6g:0% | loss=10.1340
+1775129800913 fedora info Iter 1050/2000 | reward=  8.74 | validity=  6.0% | 3g:26% 4g:0% 5g:0% 6g:0% | loss=9.3443
+1775129803019 fedora info Iter 1075/2000 | reward=  8.57 | validity=  6.0% | 3g:21% 4g:4% 5g:0% 6g:0% | loss=10.8686
+1775129805321 fedora info Iter 1100/2000 | reward=  9.01 | validity= 11.0% | 3g:38% 4g:0% 5g:0% 6g:0% | loss=9.4981
+1775129807387 fedora info Iter 1125/2000 | reward=  7.03 | validity=  6.0% | 3g:24% 4g:0% 5g:0% 6g:0% | loss=4.4154
+1775129809698 fedora info Iter 1150/2000 | reward=  9.81 | validity=  6.0% | 3g:19% 4g:4% 5g:0% 6g:0% | loss=8.0036
+1775129811917 fedora info Iter 1175/2000 | reward= 10.18 | validity= 14.0% | 3g:44% 4g:11% 5g:0% 6g:0% | loss=9.2535
+1775129814041 fedora info Iter 1200/2000 | reward=  9.28 | validity=  9.0% | 3g:33% 4g:3% 5g:0% 6g:0% | loss=12.3841
+1775129816160 fedora info Iter 1225/2000 | reward=  9.04 | validity= 12.0% | 3g:35% 4g:12% 5g:0% 6g:0% | loss=6.6646
+1775129818254 fedora info Iter 1250/2000 | reward=  8.69 | validity= 11.0% | 3g:41% 4g:0% 5g:0% 6g:0% | loss=13.8938
+1775129820376 fedora info Iter 1275/2000 | reward=  8.94 | validity= 10.0% | 3g:34% 4g:0% 5g:0% 6g:0% | loss=11.8662
+1775129822483 fedora info Iter 1300/2000 | reward=  9.47 | validity=  9.0% | 3g:33% 4g:0% 5g:0% 6g:0% | loss=11.7564
+1775129824622 fedora info Iter 1325/2000 | reward=  9.10 | validity= 15.0% | 3g:50% 4g:0% 5g:0% 6g:0% | loss=9.5354
+1775129836087 fedora info   -> Лучшая модель! (validity=15.0%)
+1775129837822 fedora info Iter 1350/2000 | reward=  8.91 | validity= 11.0% | 3g:40% 4g:5% 5g:0% 6g:0% | loss=9.3709
+1775129839775 fedora info Iter 1375/2000 | reward=  8.57 | validity= 10.0% | 3g:41% 4g:5% 5g:0% 6g:0% | loss=12.7586
+1775129841568 fedora info Iter 1400/2000 | reward=  8.34 | validity= 11.0% | 3g:36% 4g:8% 5g:0% 6g:0% | loss=12.1807
+1775129843357 fedora info Iter 1425/2000 | reward=  9.27 | validity= 12.0% | 3g:48% 4g:3% 5g:0% 6g:0% | loss=5.8041
+1775129845592 fedora info Iter 1450/2000 | reward=  9.69 | validity= 11.0% | 3g:34% 4g:0% 5g:0% 6g:0% | loss=10.1387
+1775129847815 fedora info Iter 1475/2000 | reward=  9.28 | validity=  8.0% | 3g:40% 4g:0% 5g:0% 6g:0% | loss=12.9792
+1775129850074 fedora info Iter 1500/2000 | reward=  9.22 | validity=  9.0% | 3g:32% 4g:3% 5g:0% 6g:0% | loss=10.1425
+1775129852265 fedora info Iter 1525/2000 | reward=  9.17 | validity= 13.0% | 3g:46% 4g:4% 5g:0% 6g:0% | loss=15.4993
+1775129854473 fedora info Iter 1550/2000 | reward=  8.77 | validity=  9.0% | 3g:36% 4g:0% 5g:0% 6g:0% | loss=8.8038
+1775129856647 fedora info Iter 1575/2000 | reward=  7.80 | validity= 14.0% | 3g:48% 4g:5% 5g:0% 6g:0% | loss=14.4088
+1775129858796 fedora info Iter 1600/2000 | reward=  9.14 | validity=  9.0% | 3g:29% 4g:3% 5g:0% 6g:0% | loss=7.9938
+1775129860977 fedora info Iter 1625/2000 | reward=  9.34 | validity=  7.0% | 3g:23% 4g:5% 5g:0% 6g:0% | loss=7.2559
+1775129863236 fedora info Iter 1650/2000 | reward=  9.36 | validity= 12.0% | 3g:38% 4g:5% 5g:0% 6g:0% | loss=11.3522
+1775129865363 fedora info Iter 1675/2000 | reward=  8.26 | validity=  7.0% | 3g:32% 4g:0% 5g:0% 6g:0% | loss=11.6562
+1775129867607 fedora info Iter 1700/2000 | reward=  9.35 | validity=  8.0% | 3g:26% 4g:3% 5g:0% 6g:0% | loss=10.4412
+1775129869926 fedora info Iter 1725/2000 | reward=  9.29 | validity= 14.0% | 3g:54% 4g:4% 5g:0% 6g:0% | loss=8.5652
+1775129872133 fedora info Iter 1750/2000 | reward=  9.09 | validity= 10.0% | 3g:47% 4g:5% 5g:0% 6g:0% | loss=15.1293
+1775129874346 fedora info Iter 1775/2000 | reward=  8.82 | validity=  8.0% | 3g:37% 4g:5% 5g:0% 6g:0% | loss=12.3030
+1775129876484 fedora info Iter 1800/2000 | reward=  9.14 | validity=  5.0% | 3g:25% 4g:0% 5g:0% 6g:0% | loss=11.5763
+1775129878588 fedora info Iter 1825/2000 | reward=  9.75 | validity= 13.0% | 3g:52% 4g:4% 5g:0% 6g:0% | loss=9.7365
+1775129880694 fedora info Iter 1850/2000 | reward=  9.73 | validity= 11.0% | 3g:33% 4g:5% 5g:0% 6g:0% | loss=7.1201
+1775129882809 fedora info Iter 1875/2000 | reward=  8.47 | validity=  9.0% | 3g:29% 4g:5% 5g:0% 6g:0% | loss=6.0621
+1775129884992 fedora info Iter 1900/2000 | reward=  9.33 | validity=  7.0% | 3g:33% 4g:3% 5g:0% 6g:0% | loss=11.4214
+1775129887262 fedora info Iter 1925/2000 | reward=  9.59 | validity= 12.0% | 3g:37% 4g:6% 5g:0% 6g:0% | loss=10.3921
+1775129889379 fedora info Iter 1950/2000 | reward=  8.59 | validity=  6.0% | 3g:19% 4g:5% 5g:0% 6g:0% | loss=8.6641
+1775129891508 fedora info Iter 1975/2000 | reward= 10.12 | validity= 13.0% | 3g:38% 4g:5% 5g:0% 6g:0% | loss=5.5232
+1775129893633 fedora info Iter 2000/2000 | reward=  9.11 | validity=  9.0% | 3g:28% 4g:0% 5g:0% 6g:0% | loss=12.6100
+============================================================
+ФИНАЛЬНАЯ ОЦЕНКА
+1775129897867 fedora info Validity rate: 9.2% (46/500)
+Mean reward: 8.64
+По числу ворот:
+  3 ворот: 41/121 (33.9%)
+  4 ворот: 5/138 (3.6%)
+  5 ворот: 0/121 (0.0%)
+  6 ворот: 0/120 (0.0%)
+1775129899007 fedora info Графики: /home/username/Документы/Архив/Study/2 курс/ПМИИ/Data-science-and-ML/Project3.0/data/training_curves.png
+1775129902296 fedora info Визуализация: /home/username/Документы/Архив/Study/2 курс/ПМИИ/Data-science-and-ML/Project3.0/data/viz_rl_results.png
+Готово!
