@@ -1,15 +1,5 @@
 """
-RL-агент на основе PPO — подход "всё за один шаг".
-
-Ключевое отличие от v2:
-- Нет GRU (не нужен — нет последовательности шагов)
-- Модель получает число ворот → выдаёт ВСЕ позиции сразу
-- Один эпизод = один шаг → PPO работает стабильнее
-
-Архитектура:
-  n_gates (1) → [Linear 256 → ReLU] × 3 → два выхода:
-    - Actor: mean для всех ворот (MAX_GATES * 3)
-    - Critic: value (1 число)
+RL-агент на основе PPO с маскированием неиспользуемых выходов.
 """
 
 import torch
@@ -17,43 +7,35 @@ import torch.nn as nn
 import numpy as np
 from torch.distributions import Normal
 
-from environment_with_flags import MAX_GATES, MAX_FLAGS
-ACTION_DIM = MAX_GATES * 3 + MAX_FLAGS * 2  # 18 + 12 = 30
+from environment_with_flags import MAX_GATES, MAX_FLAGS, ACTION_DIM
 
 class PolicyNetwork(nn.Module):
     """
-    Нейросеть: число ворот → позиции всех ворот.
-
-    Вход: (batch, 1) — нормализованное число ворот
-    Выход:
-      - action_mean: (batch, 18) — средние для Gaussian policy
-      - action_std: (batch, 18) — стандартные отклонения
-      - value: (batch,) — оценка качества состояния
+    [n_gates, n_flags] (2 числа) → все ворота и флаги.
+    Маскирование: градиенты идут только на активные выходы.
     """
 
-    def __init__(self, state_dim: int = 1, hidden_dim: int = 512):
+    def __init__(self, state_dim: int = 2, hidden_dim: int = 512):
         super().__init__()
 
-        # Общий энкодер
         self.encoder = nn.Sequential(
-            nn.Linear(1, hidden_dim),
+            nn.Linear(state_dim, hidden_dim),
             nn.ReLU(),
             nn.Linear(hidden_dim, hidden_dim),
             nn.ReLU(),
-            nn.Linear(hidden_dim, hidden_dim),  # Новый слой!
+            nn.Linear(hidden_dim, hidden_dim),
             nn.ReLU(),
         )
 
-        # Actor: предсказывает позиции всех ворот
         self.actor_mean = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
             nn.ReLU(),
             nn.Linear(hidden_dim, ACTION_DIM),
-            nn.Sigmoid(),  # [0, 1] — далее среда переводит в реальные координаты
+            nn.Sigmoid(),
         )
-        self.actor_log_std = nn.Parameter(torch.zeros(ACTION_DIM))
+        # Начальный std = 0.135 (вместо 1.0) — точнее, меньше шума
+        self.actor_log_std = nn.Parameter(torch.ones(ACTION_DIM) * (-2.0))
 
-        # Critic: оценивает качество текущего состояния
         self.critic = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim // 2),
             nn.ReLU(),
@@ -61,14 +43,6 @@ class PolicyNetwork(nn.Module):
         )
 
     def forward(self, state):
-        """
-        Args:
-            state: (batch, STATE_DIM)
-        Returns:
-            action_mean: (batch, ACTION_DIM)
-            action_std: (batch, ACTION_DIM)
-            value: (batch,)
-        """
         x = self.encoder(state)
         action_mean = self.actor_mean(x)
         action_std = self.actor_log_std.exp().expand_as(action_mean)
@@ -77,41 +51,37 @@ class PolicyNetwork(nn.Module):
 
     def select_action(self, state: np.ndarray):
         """
-        Выбирает действие для одного состояния.
-
-        Returns:
-            action, log_prob, value
+        Возвращает action, log_prob (скаляр), value, log_prob_per_dim (вектор), entropy_per_dim (вектор)
         """
         state_t = torch.FloatTensor(state).unsqueeze(0)
         mean, std, value = self.forward(state_t)
         dist = Normal(mean, std)
         action = dist.sample()
         action = action.clamp(0, 1)
-        log_prob = dist.log_prob(action).sum(-1)
+        
+        log_prob_per_dim = dist.log_prob(action).squeeze(0)      # (ACTION_DIM,)
+        entropy_per_dim = dist.entropy().squeeze(0)             # (ACTION_DIM,)
+        log_prob = log_prob_per_dim.sum()                       # скаляр
 
         return (action.squeeze(0).detach().numpy(),
-                log_prob.squeeze(0).detach(),
-                value.squeeze(0).detach())
+                log_prob.detach(),
+                value.squeeze(0).detach(),
+                log_prob_per_dim.detach(),
+                entropy_per_dim.detach())
 
     def evaluate(self, states, actions):
-        """Оценивает действия (при обновлении PPO)."""
+        """Возвращает log_prob и entropy ПО КАЖДОМУ ИЗМЕРЕНИЮ (для маскирования)."""
         mean, std, values = self.forward(states)
         dist = Normal(mean, std)
-        log_probs = dist.log_prob(actions).sum(-1)
-        entropy = dist.entropy().sum(-1)
+        log_probs = dist.log_prob(actions)          # (batch, ACTION_DIM)
+        entropy = dist.entropy()                    # (batch, ACTION_DIM) — БЕЗ аргументов!
         return log_probs, values, entropy
 
 
 class PPOTrainer:
-    """
-    PPO для одношаговых эпизодов.
-
-    Упрощение: каждый эпизод = 1 шаг, поэтому returns = reward (без дисконта).
-    """
-
-    def __init__(self, policy: PolicyNetwork, lr: float = 3e-4,
+    def __init__(self, policy: PolicyNetwork, lr: float = 5e-4,
                  clip_eps: float = 0.2, value_coef: float = 0.5,
-                 entropy_coef: float = 0.02, ppo_epochs: int = 10):
+                 entropy_coef: float = 0.1, ppo_epochs: int = 20):
         self.policy = policy
         self.optimizer = torch.optim.Adam(policy.parameters(), lr=lr)
         self.clip_eps = clip_eps
@@ -120,29 +90,27 @@ class PPOTrainer:
         self.ppo_epochs = ppo_epochs
 
     def update(self, episodes_data: list[dict]) -> dict:
-        """
-        Обновляет веса по собранным эпизодам.
-
-        Для одношаговых эпизодов: return = reward (без дисконта).
-        """
         states = torch.FloatTensor(np.array([ep["state"] for ep in episodes_data]))
         actions = torch.FloatTensor(np.array([ep["action"] for ep in episodes_data]))
         rewards = torch.FloatTensor([ep["reward"] for ep in episodes_data])
-        old_log_probs = torch.stack([ep["log_prob"] for ep in episodes_data])
+        old_log_probs_per_dim = torch.stack([ep["log_prob_per_dim"] for ep in episodes_data])
         old_values = torch.stack([ep["value"] for ep in episodes_data])
+        masks = torch.FloatTensor(np.array([ep["mask"] for ep in episodes_data]))  # (batch, ACTION_DIM)
 
-        # Returns = rewards (1-step episodes, no discount)
+        # Суммируем log_prob только по активным выходам
+        old_log_probs = (old_log_probs_per_dim * masks).sum(-1)
         returns = rewards
 
-        # Advantages
         advantages = returns - old_values
         if len(advantages) > 1:
             advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
-        # PPO update
         total_loss_val = 0
         for _ in range(self.ppo_epochs):
-            new_log_probs, new_values, entropy = self.policy.evaluate(states, actions)
+            new_log_probs_per_dim, new_values, entropy_per_dim = self.policy.evaluate(states, actions)
+            
+            new_log_probs = (new_log_probs_per_dim * masks).sum(-1)
+            entropy = (entropy_per_dim * masks).sum(-1)
 
             ratio = (new_log_probs - old_log_probs).exp()
             surr1 = ratio * advantages
